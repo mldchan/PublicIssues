@@ -19,9 +19,11 @@ services:
           action: rebuild
   postgres:
     image: postgres:latest
+    ports:
+      - "5432:5432"
     volumes:
       - ./data/pg:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=mldchan
       - POSTGRES_PASSWORD=changeme
-      - POSTGRES_DATABASE=publicissues
+      - POSTGRES_DB=publicissues

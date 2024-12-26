@@ -1,8 +1,8 @@
-import {Project} from "@/types/project";
+import {ProjectBase} from "@/types/project";
 import {forgejoApi} from "forgejo-js";
 import { fetch } from 'cross-fetch';
 
-export async function getAllForgejoProjects(): Promise<Project[]> {
+export async function getAllForgejoProjects(): Promise<ProjectBase[]> {
     const api = forgejoApi(process.env.FORGEJO_INSTANCE ?? 'https://codeberg.org/', {
         token: process.env.FORGEJO_TOKEN!,
         customFetch: fetch
@@ -19,13 +19,12 @@ export async function getAllForgejoProjects(): Promise<Project[]> {
             id: x.id ?? -1,
             usernameSlug: user.data.login_name ?? 'undefined',
             projectName: x.name ?? x.full_name ?? 'undefined',
-            privacy: x.private ? 'Private' : 'Public',
             shortDescription: x.description ?? 'undefined'
         }
     });
 }
 
-export async function getForgejoProject(id: number): Promise<Project | null> {
+export async function getForgejoProject(id: number): Promise<ProjectBase | null> {
     const api = forgejoApi(process.env.FORGEJO_INSTANCE ?? 'https://codeberg.org/', {
         token: process.env.FORGEJO_TOKEN!,
         customFetch: fetch
@@ -44,7 +43,6 @@ export async function getForgejoProject(id: number): Promise<Project | null> {
         id,
         projectName: repo.name ?? 'undefined',
         shortDescription: repo.description ?? 'undefined',
-        privacy: repo.private ? 'Private' : 'Public',
         usernameSlug: user.data.login_name ?? 'undefined'
     }
 }

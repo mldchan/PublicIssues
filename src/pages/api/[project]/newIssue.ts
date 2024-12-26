@@ -1,12 +1,12 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import {validateTurnstileResponse} from "@/backend/turnstile";
-import {createProjectIssue} from "@/backend/issueManagement";
+import {createProjectIssue, getProject} from "@/backend/issues/issues";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const {project} = req.query as {project: string};
+    const {project: projectId} = req.query as {project: string};
     const {token, title, body} = req.body;
 
-    if (!project || isNaN(Number(project))) {
+    if (!projectId || isNaN(Number(projectId))) {
         res.status(400).send({'error': `Invalid project ID`});
         return;
     }
@@ -33,6 +33,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (!(await validateTurnstileResponse(token))) {
         res.status(400).json({'error': "Turnstile error"});
+        return;
+    }
+
+    const project = await getProject(Number(projectId));
+    if (!project) {
+        res.status(400).json({'error': `Invalid project ID`});
+        return;
+    }
+
+    if (project.privacy === "Private" || !project.allowIssues) {
+        res.status(400).json({'error': `Project does not allow creating issues`});
         return;
     }
 

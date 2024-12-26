@@ -15,6 +15,7 @@
     "forgejo-js": "^9.0.1",
     "next": "15.1.2",
     "next-turnstile": "^1.0.0",
+    "postgres": "^3.4.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-markdown": "^9.0.1",

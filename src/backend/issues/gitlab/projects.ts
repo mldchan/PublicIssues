@@ -1,9 +1,8 @@
 import {Gitlab} from "@gitbeaker/rest";
-import {Project, ProjectPrivacy} from "@/types/project";
+import {ProjectBase} from "@/types/project";
 import {Issue} from "@/types/issue";
-import {is} from "unist-util-is";
 
-export async function getAllGitLabProjects(): Promise<Project[]> {
+export async function getAllGitLabProjects(): Promise<ProjectBase[]> {
     const gitlab = new Gitlab({
         host: process.env.GITLAB_INSTANCE ?? 'https://gitlab.com',
         token: process.env.GITLAB_TOKEN!
@@ -12,21 +11,16 @@ export async function getAllGitLabProjects(): Promise<Project[]> {
     const projects = await gitlab.Projects.all();
 
     return projects.map(x => {
-        let visibility: ProjectPrivacy = 'Public';
-        if (x.visibility === 'internal') visibility = 'Unlisted';
-        if (x.visibility === 'private') visibility = 'Private';
-
         return {
             id: x.id,
             usernameSlug: x.namespace.name,
             projectName: x.name,
-            privacy: visibility,
-            shortDescription: x.description
+            shortDescription: x.description,
         }
     })
 }
 
-export async function getGitLabProject(id: number): Promise<Project> {
+export async function getGitLabProject(id: number): Promise<ProjectBase> {
     const gitlab = new Gitlab({
         host: process.env.GITLAB_INSTANCE ?? 'https://gitlab.com',
         token: process.env.GITLAB_TOKEN!
@@ -34,16 +28,11 @@ export async function getGitLabProject(id: number): Promise<Project> {
 
     const project = await gitlab.Projects.show(id);
 
-    let visibility: ProjectPrivacy = 'Public';
-    if (project.visibility === 'internal') visibility = 'Unlisted';
-    if (project.visibility === 'private') visibility = 'Private';
-
     return {
         id: project.id,
         usernameSlug: project.namespace.name,
         projectName: project.name,
-        privacy: visibility,
-        shortDescription: project.description
+        shortDescription: project.description,
     }
 }
 

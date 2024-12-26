@@ -1,8 +1,8 @@
 import {GetServerSidePropsContext, InferGetServerSidePropsType} from "next";
-import {getProject} from "@/backend/issueManagement";
+import {getProject} from "@/backend/issues/issues";
 import {FormEvent, useRef, useState} from "react";
 import {Turnstile} from "next-turnstile";
-import {fetch} from "cross-fetch";
+import {submitIssue} from "@/frontend/issues";
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const {project} = ctx.params as { project: string };
@@ -11,6 +11,8 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     const fetchedProject = await getProject(Number(project));
     if (!fetchedProject) return {notFound: true};
+
+    if (!fetchedProject.allowIssues) return {notFound: true};
 
     return {
         props: {
@@ -28,7 +30,6 @@ export default function CreateIssue(props: InferGetServerSidePropsType<typeof ge
 
     const formRef = useRef<HTMLFormElement>(null);
 
-
     const handleForm = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -42,32 +43,10 @@ export default function CreateIssue(props: InferGetServerSidePropsType<typeof ge
 
         setLoading(true);
 
-        fetch(`/api/${props.project.id}/newIssue`, {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            method: 'POST',
-            body: JSON.stringify({
-                token: token?.toString() ?? '',
-                title: issueTitle?.toString() ?? '',
-                body: issueBody?.toString() ?? ''
-            })
-        }).then(x => {
-            if (x.ok) {
-                setLoading(false);
-
-                x.json().then(x => {
-                    document.location = x.issueURL;
-                });
-            } else {
-                setLoading(false);
-
-                x.json().then(x => {
-                    setError(`API returned error: ${x.error}`);
-                }).catch(x => {
-                    setError(`Unknown error: ${x}`);
-                })
-            }
+        submitIssue(props.project.id, issueTitle?.toString() ?? '', issueBody?.toString() ?? '', token?.toString() ?? '').then(x => {
+            if (!x.status)
+                setError(x.error!);
+            setLoading(false);
         })
     }
 

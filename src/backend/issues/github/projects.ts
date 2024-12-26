@@ -1,7 +1,7 @@
-import {Project} from "@/types/project";
+import {ProjectBase} from "@/types/project";
 import {Octokit} from "@octokit/rest";
 
-export async function getAllGitHubProjects(): Promise<Project[]> {
+export async function getAllGitHubProjects(): Promise<ProjectBase[]> {
     const octokit = new Octokit({
         auth: process.env.GITHUB_TOKEN
     });
@@ -17,13 +17,12 @@ export async function getAllGitHubProjects(): Promise<Project[]> {
             id: x.id,
             usernameSlug: user.login,
             projectName: x.name,
-            privacy: x.private ? 'Private' : 'Public',
             shortDescription: x.description ?? ''
         }
     })
 }
 
-export async function getGitHubProject(id: number): Promise<Project | null> {
+export async function getGitHubProject(id: number): Promise<ProjectBase | null> {
     const octokit = new Octokit({
         auth: process.env.GITHUB_TOKEN
     });
@@ -40,7 +39,6 @@ export async function getGitHubProject(id: number): Promise<Project | null> {
         id: project.id,
         usernameSlug: user.login,
         projectName: project.name,
-        privacy: project.private ? 'Private' : 'Public',
         shortDescription: ""
     }
 }
