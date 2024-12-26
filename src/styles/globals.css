@@ -3,19 +3,39 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+main {
+  @apply w-3/4 mx-auto
+}
+
+h1 {
+  @apply text-3xl font-bold
+}
+
+h2 {
+  @apply text-2xl font-bold
+}
+
+ul > li {
+  @apply ml-2 list-disc
+}
+
+ul {
+  @apply ml-4
+}
+
+hr {
+  @apply m-2 mt-4 h-4
+}
+
+input[type=text], textarea {
+  @apply bg-gray-900 border-2 border-white m-2 p-1 rounded-lg w-full;
 }

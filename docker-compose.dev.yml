@@ -1,0 +1,27 @@
+
+services:
+  publicissues:
+    build:
+      context: .
+      target: dev
+    env_file: .env
+    ports:
+      - "3000:3000"
+    develop:
+      watch:
+        - path: src
+          action: sync
+          target: /app/src
+        - path: public
+          action: sync
+          target: /app/public
+        - path: package.json
+          action: rebuild
+  postgres:
+    image: postgres:latest
+    volumes:
+      - ./data/pg:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=mldchan
+      - POSTGRES_PASSWORD=changeme
+      - POSTGRES_DATABASE=publicissues

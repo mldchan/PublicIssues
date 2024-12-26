@@ -9,16 +9,24 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@gitbeaker/rest": "^41.3.0",
+    "@octokit/rest": "^21.0.2",
+    "cross-fetch": "^4.1.0",
+    "forgejo-js": "^9.0.1",
+    "next": "15.1.2",
+    "next-turnstile": "^1.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "next": "15.1.2"
+    "react-markdown": "^9.0.1",
+    "remark-gfm": "^4.0.0",
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "postcss": "^8",
-    "tailwindcss": "^3.4.1"
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
   }
 }
