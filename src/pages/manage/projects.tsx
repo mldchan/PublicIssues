@@ -3,7 +3,7 @@ import LogInForm from "@/components/management/LogIn";
 import ProjectList from "@/components/management/ProjectList";
 
 
-export default function Manage() {
+export default function ManageProjects() {
 
     const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
@@ -36,12 +36,10 @@ export default function Manage() {
     }
 
     return <main>
-        <h1>Welcome to admin board!</h1>
-        <a href={`/manage/projects`}>
-            <button className={'bg-blue-600 rounded-lg p-1 px-2'}>Project management</button>
+        <h1>Project Management</h1>
+        <a href={`/manage`}>
+            <button className={'bg-blue-600 rounded-lg p-1 px-2'}>Go back</button>
         </a>
-        <a href={`/manage/instance`}>
-            <button className={'bg-blue-600 rounded-lg p-1 px-2'}>Instance settings</button>
-        </a>
+        <ProjectList />
     </main>
 }

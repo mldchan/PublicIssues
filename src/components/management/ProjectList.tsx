@@ -60,15 +60,25 @@ export default function ProjectList() {
                 setProjects(updateProjects(projects, project.id, status ? 'updAllowSucess' : 'updAllowFail'));
             }
 
+            let privacy = 0;
+            switch (project.privacy) {
+                case "Unlisted":
+                    privacy = 1;
+                    break;
+                case "Public":
+                    privacy = 2;
+                    break;
+            }
+
             return <div className={scopedStyles.project} key={project.id}>
                 <h1>{project.usernameSlug} / {project.projectName}</h1>
                 <ReactMarkdown children={project.shortDescription} remarkPlugins={[remarkGfm]}
                                disallowedElements={["headers"]}/>
                 <label htmlFor='privacy'>Privacy:</label>
-                <select className='w-1/3' onChange={changeProjectVisibility}>
-                    <option value={0} selected={project.privacy === 'Private'}>Private</option>
-                    <option value={2} selected={project.privacy === 'Public'}>Public</option>
-                    <option value={1} selected={project.privacy === 'Unlisted'}>Unlisted</option>
+                <select className='w-1/3' onChange={changeProjectVisibility} value={privacy}>
+                    <option value={0}>Private</option>
+                    <option value={2}>Public</option>
+                    <option value={1}>Unlisted</option>
                 </select>
                 {project.status && project.status === "updVisibilitySuccess" &&
                     <span className='text-green-600'>success!</span>}

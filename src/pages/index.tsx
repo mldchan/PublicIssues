@@ -3,6 +3,7 @@ import {getAllProjects, getIssueManager} from "@/backend/issues/issues";
 import ReactMarkdown from "react-markdown";
 import scopedStyles from '@/styles/scoped.module.css';
 import remarkGfm from "remark-gfm";
+import {getValue} from "@/backend/db/keyValueStore";
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const projects = await getAllProjects();
@@ -10,7 +11,8 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     return {
         props: {
             projects: projects.filter(x => x.privacy === "Public"),
-            issueMngr: getIssueManager()
+            title: await getValue("instTitle"),
+            description: await getValue("instDescription")
         }
     }
 }
@@ -19,8 +21,8 @@ export default function Home(props: InferGetServerSidePropsType<typeof getServer
     return (
         <main>
 
-            <h1>Welcome to Public Issues!</h1>
-            <p>Here you can file issues on {props.issueMngr} without an account.</p>
+            <h1>{props.title}</h1>
+            <p>{props.description}</p>
 
             <hr/>
 

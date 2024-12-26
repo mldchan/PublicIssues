@@ -1,4 +1,6 @@
 import sql from "@/backend/db/postgres";
+import {defaultValue} from "@/backend/db/keyValueStore";
+import {getIssueManager} from "@/backend/issues/issues";
 
 export async function ensureDatabase(): Promise<void> {
     await sql`create table if not exists users
@@ -30,7 +32,18 @@ export async function ensureDatabase(): Promise<void> {
                   allow_issues    integer default 1 not null
               );`;
 
+    await sql`create table if not exists kv_store
+              (
+                  key   text
+                      constraint kv_store_pk
+                          primary key,
+                  value text not null
+              );`
+
     await ensureDefaultAdminUser();
+
+    await defaultValue("instTitle", "Welcome to Public Issues!");
+    await defaultValue("instDescription", `Here you can file issues on ${getIssueManager()} without an account.`);
 }
 
 async function ensureDefaultAdminUser(): Promise<void> {
@@ -79,4 +92,17 @@ export async function checkPassword(username: string, password: string): Promise
 export async function checkToken(token: string) {
     const res = await sql`select "user" from users_token where token = ${token}`;
     return res.length === 1;
+}
+
+export async function deleteUser(username: string) {
+    await sql`delete from users_token where "user" = ${username}`;
+    const a = await sql`delete from users where username = ${username}`;
+
+    return a.length === 1
+}
+
+export async function getUsers(): Promise<string[]> {
+    const a = await sql`select username from users`;
+
+    return a.map(x => x.username);
 }
