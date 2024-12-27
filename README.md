@@ -13,12 +13,25 @@ This project aims to fix one thing: Ability to report bugs or create suggestions
 All you have to do to set this up is set the environment variables for the project:
 
 ```
-ISSUE_TYPE=gitlab # Or forgejo/github
+ISSUE_TYPE=gitlab # forgejo, github
 GITHUB_TOKEN=
-GITLAB_TOKEN=
 GITLAB_INSTANCE=
+GITLAB_TOKEN=
 FORGEJO_TOKEN=
 FORGEJO_INSTANCE=
+# Turnstile to prevent abuse, since there are no accounts or anything
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=
+TURNSTILE_SECRET_KEY=
+# Postgres database for storing the information about projects and admins
+# Issues are created on the issue provider directly using the token
+PGHOST=
+PGPORT=
+PGDATABASE=
+PGUSER=
+PGPASSWORD=
+# Create default admin user
+ADMIN_USERNAME=
+ADMIN_PASSWORD=
 ```
 
 Fill the parameters as needed. If you use Issue Type of GitLab, don't fill out GitHub and Forgejo, it's not required.

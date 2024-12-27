@@ -1,5 +1,5 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import {checkToken, deleteUser, newUser} from "@/backend/users/admin";
+import {checkToken, deleteUser, getUsers, newUser} from "@/backend/users/admin";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
@@ -26,13 +26,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         })
     }
 
-    const user1 = await deleteUser(username);
+    await deleteUser(username);
+    const users = await getUsers();
 
-    if (user1) {
-        return res.status(204).end();
-    } else {
-        return res.status(401).send({
-            error: 'Deleting user failed'
-        })
-    }
+    return res.status(200).json(users);
 }

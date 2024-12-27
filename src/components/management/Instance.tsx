@@ -1,5 +1,7 @@
 import {useEffect, useRef, useState} from "react";
-import {createUser, deleteUser, getSettings, getUsers, setSettings} from "@/frontend/admin/instance";
+import {getSettings, setSettings} from "@/frontend/admin/instance";
+import {createUser, deleteUser} from "@/frontend/admin/users";
+import {getUsers} from "@/frontend/admin/users";
 
 
 export default function InstanceSettings() {
@@ -13,8 +15,10 @@ export default function InstanceSettings() {
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [userLoading, setUserLoading] = useState(false);
-    const [userSuccess, setUserSuccess] = useState(false);
-    const [userError, setUserError] = useState(false);
+    const [createUserSuccess, setCreateUserSuccess] = useState(false);
+    const [createUserError, setCreateUserError] = useState(false);
+    const [deleteUserSuccess, setDeleteUserSuccess] = useState(false);
+    const [deleteUserError, setDeleteUserError] = useState(false);
 
     const initialTitle = useRef("");
     const initialDescription = useRef("");
@@ -57,12 +61,12 @@ export default function InstanceSettings() {
         const out = await createUser(username, password);
 
         if (out.success) {
-            setUserSuccess(true);
+            setCreateUserSuccess(true);
             setUsers([...users, username]);
             setUsername('');
             setPassword('');
         } else {
-            setUserError(true);
+            setCreateUserError(true);
         }
 
         setUserLoading(false);
@@ -100,11 +104,16 @@ export default function InstanceSettings() {
             <tbody>
             {users.map(x => {
                 const submitUserDelete = async () => {
-                    const success = await deleteUser(x);
-                    if (success.success) {
-                        setUsers(users.filter(y => x !== y));
+
+                    setDeleteUserError(false);
+                    setCreateUserSuccess(false);
+
+                    const delUserResult = await deleteUser(x);
+                    if (delUserResult.success) {
+                        setUsers(delUserResult.newUsers!);
+                        setDeleteUserSuccess(true);
                     } else {
-                        alert("Failed to delete user");
+                        setDeleteUserError(true);
                     }
                 }
 
@@ -117,6 +126,9 @@ export default function InstanceSettings() {
             })}
             </tbody>
         </table>
+
+        {deleteUserSuccess && <p className={'text-green-600'}>User successfully deleted!</p>}
+        {deleteUserError && <p className={'text-red-600'}>Failed to delete user!</p>}
 
         <hr/>
 
@@ -131,6 +143,8 @@ export default function InstanceSettings() {
         <input type={"password"} value={password} onChange={x => setPassword(x.target.value)} disabled={userLoading} />
         <br/>
         <button onClick={submitUserCreateForm} disabled={userLoading} className={'bg-blue-600 rounded-lg p-1 px-2'}>Create user</button>
+        {createUserSuccess && <p className={'text-green-600'}>User was created!</p>}
+        {createUserError && <p className={'text-red-600'}>Failed to create user!</p>}
     </>
 
 }

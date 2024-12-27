@@ -1,5 +1,5 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import {checkToken, newUser} from "@/backend/users/admin";
+import {checkToken, getUsers, newUser} from "@/backend/users/admin";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
@@ -21,13 +21,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         })
     }
 
-    const user1 = await newUser(username, password);
+    await newUser(username, password);
+    const users = await getUsers();
 
-    if (user1) {
-        return res.status(204).end();
-    } else {
-        return res.status(401).send({
-            error: 'Creating user failed'
-        })
-    }
+    return res.status(200).json(users);
 }
