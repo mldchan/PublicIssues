@@ -54,6 +54,6 @@ hr {
     @apply m-2 mt-4 h-4
 }
 
-input[type=text], input[type=password], select, textarea {
+input[type=text], input[type=password], input[type=url], select, textarea {
     @apply bg-gray-900 border-2 border-white m-2 p-1 rounded-lg w-full;
 }

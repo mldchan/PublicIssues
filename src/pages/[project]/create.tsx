@@ -21,6 +21,9 @@ import {FormEvent, useRef, useState} from "react";
 import Turnstile, {useTurnstile} from "react-turnstile";
 import {submitIssue} from "@/frontend/issues";
 import {ensureDatabase} from "@/backend/users/admin";
+import {getValue} from "@/backend/db/keyValueStore";
+import Head from "next/head";
+import Metadata from "@/components/Metadata";
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const {project} = ctx.params as { project: string };
@@ -34,10 +37,34 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     if (!fetchedProject.allowIssues) return {notFound: true};
 
+    let title = await getValue("projectMetaTitle") as string;
+    let description = await getValue("projectMetaDescription") as string;
+    let author = await getValue("projectMetaAuthor") as string;
+    let siteName = await getValue("projectMetaSiteName") as string;
+
+    title = title.replace("%name%", fetchedProject.projectName);
+    title = title.replace("%author%", fetchedProject.usernameSlug);
+    title = title.replace("%id%", fetchedProject.id.toString());
+
+    description = description.replace("%name%", fetchedProject.projectName);
+    description = description.replace("%author%", fetchedProject.usernameSlug);
+    description = description.replace("%id%", fetchedProject.id.toString());
+
+    author = author.replace("%name%", fetchedProject.projectName);
+    author = author.replace("%author%", fetchedProject.usernameSlug);
+    author = author.replace("%id%", fetchedProject.id.toString());
+
+    siteName = siteName.replace("%name%", fetchedProject.projectName);
+    siteName = siteName.replace("%author%", fetchedProject.usernameSlug);
+    siteName = siteName.replace("%id%", fetchedProject.id.toString());
+
     return {
         props: {
             project: fetchedProject,
-            cfKey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!
+            cfKey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!,
+            meta: {
+                title, description, author, domain: await getValue("domain"), siteName
+            }
         }
     }
 }
@@ -76,6 +103,14 @@ export default function CreateIssue(props: InferGetServerSidePropsType<typeof ge
 
     return <>
         <main>
+            <Head>
+                <Metadata name={props.meta.title}
+                          description={props.meta.description}
+                          domain={props.meta.domain}
+                          author={props.meta.author}
+                          siteName={props.meta.siteName}/>
+            </Head>
+
             <h1>Create an issue under {props.project.projectName}</h1>
             <form ref={formRef} onSubmit={handleForm}>
                 <label htmlFor="title">Issue Title</label>

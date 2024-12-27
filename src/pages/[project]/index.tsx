@@ -20,6 +20,9 @@ import {getProject, getProjectIssues} from "@/backend/issues/issues";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {ensureDatabase} from "@/backend/users/admin";
+import {getValue} from "@/backend/db/keyValueStore";
+import Head from "next/head";
+import Metadata from "@/components/Metadata";
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const {project} = ctx.params as { project: string };
@@ -36,16 +39,48 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const fetchedIssues = await getProjectIssues(Number(project));
     if (!fetchedIssues) return {notFound: true};
 
+    let title = await getValue("projectMetaTitle") as string;
+    let description = await getValue("projectMetaDescription") as string;
+    let author = await getValue("projectMetaAuthor") as string;
+    let siteName = await getValue("projectMetaSiteName") as string;
+
+    title = title.replace("%name%", fetchedProject.projectName);
+    title = title.replace("%author%", fetchedProject.usernameSlug);
+    title = title.replace("%id%", fetchedProject.id.toString());
+
+    description = description.replace("%name%", fetchedProject.projectName);
+    description = description.replace("%author%", fetchedProject.usernameSlug);
+    description = description.replace("%id%", fetchedProject.id.toString());
+
+    author = author.replace("%name%", fetchedProject.projectName);
+    author = author.replace("%author%", fetchedProject.usernameSlug);
+    author = author.replace("%id%", fetchedProject.id.toString());
+
+    siteName = siteName.replace("%name%", fetchedProject.projectName);
+    siteName = siteName.replace("%author%", fetchedProject.usernameSlug);
+    siteName = siteName.replace("%id%", fetchedProject.id.toString());
+
     return {
         props: {
             project: fetchedProject,
-            issues: fetchedIssues
+            issues: fetchedIssues,
+            meta: {
+                title, description, author, domain: await getValue("domain"), siteName
+            }
         }
     }
 }
 
 export default function Project(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
     return <main>
+        <Head>
+            <Metadata name={props.meta.title}
+                      description={props.meta.description}
+                      domain={props.meta.domain}
+                      author={props.meta.author}
+                      siteName={props.meta.siteName}/>
+        </Head>
+
         <h1>Project: {props.project.projectName}</h1>
         {props.project.allowIssues && <>
             <h2>Create a new issue:</h2>

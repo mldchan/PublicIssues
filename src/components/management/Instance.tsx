@@ -27,6 +27,17 @@ export default function InstanceSettings() {
     const [title, setTitle] = useState<string>();
     const [description, setDescription] = useState<string>();
 
+    const [indexMetaTitle, setIndexMetaTitle] = useState<string>("");
+    const [indexMetaDescription, setIndexMetaDescription] = useState<string>("");
+    const [domain, setDomain] = useState<string>("");
+    const [indexMetaAuthor, setIndexMetaAuthor] = useState<string>("");
+    const [indexMetaSiteName, setIndexMetaSiteName] = useState<string>("");
+
+    const [projectMetaTitle, setProjectMetaTitle] = useState<string>("");
+    const [projectMetaDescription, setProjectMetaDescription] = useState<string>("");
+    const [projectMetaAuthor, setProjectMetaAuthor] = useState<string>("");
+    const [projectMetaSiteName, setProjectMetaSiteName] = useState<string>("");
+
     const [users, setUsers] = useState<string[]>([]);
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
@@ -52,6 +63,16 @@ export default function InstanceSettings() {
                     setDescription(x.description!);
                     initialTitle.current = x.title!;
                     initialDescription.current = x.description!;
+
+                    setIndexMetaTitle(x.meta!.index.title);
+                    setIndexMetaDescription(x.meta!.index.description);
+                    setIndexMetaAuthor(x.meta!.index.author);
+                    setIndexMetaSiteName(x.meta!.index.siteName);
+                    setProjectMetaTitle(x.meta!.project.title);
+                    setProjectMetaDescription(x.meta!.project.description);
+                    setProjectMetaAuthor(x.meta!.project.author);
+                    setProjectMetaSiteName(x.meta!.project.siteName);
+                    setDomain(x.meta!.domain);
                 }
             }),
             getUsers().then(x => {
@@ -67,7 +88,22 @@ export default function InstanceSettings() {
     const saveSettings = async () => {
         await setSettings({
             newTitle: initialTitle.current !== title ? title : undefined,
-            newDescription: initialDescription.current !== description ? description : undefined
+            newDescription: initialDescription.current !== description ? description : undefined,
+            meta: {
+                index: {
+                    title: indexMetaTitle,
+                    description: indexMetaDescription,
+                    author: indexMetaDescription,
+                    siteName: indexMetaSiteName
+                },
+                project: {
+                    title: projectMetaTitle,
+                    description: projectMetaDescription,
+                    author: projectMetaAuthor,
+                    siteName: projectMetaSiteName
+                },
+                domain
+            }
         });
     }
 
@@ -105,6 +141,58 @@ export default function InstanceSettings() {
         <label htmlFor={'description'}>Description:</label>
         <br/>
         <input type={"text"} value={description} onChange={x => setDescription(x.target.value)} onBlur={saveSettings}/>
+
+        <details>
+            <summary>Meta configuration</summary>
+
+            <br/>
+            <label>Domain:</label>
+            <br/>
+            <input type={"url"} value={domain} onChange={x => setDomain(x.target.value)} onBlur={saveSettings}/>
+            <br/>
+
+            <h3>Main page</h3>
+            <label>Title in embeds</label>
+            <br/>
+            <input type={"text"} value={indexMetaTitle} onChange={x => setIndexMetaTitle(x.target.value)}
+                   onBlur={saveSettings}/>
+            <br/>
+            <label>Description in embeds</label>
+            <br/>
+            <input type={"text"} value={indexMetaDescription} onChange={x => setIndexMetaDescription(x.target.value)}
+                   onBlur={saveSettings}/>
+            <br/>
+            <label>Author in embeds</label>
+            <br/>
+            <input type={"text"} value={indexMetaAuthor} onChange={x => setIndexMetaAuthor(x.target.value)}
+                   onBlur={saveSettings}/>
+            <br/>
+            <label>Site name in embeds</label>
+            <br/>
+            <input type={"text"} value={indexMetaSiteName} onChange={x => setIndexMetaSiteName(x.target.value)}
+                   onBlur={saveSettings}/>
+
+            <h3>Individual project pages</h3>
+            <label>Title for project (%name%, %id% get replaced)</label>
+            <br/>
+            <input type={"text"} value={projectMetaTitle} onChange={x => setProjectMetaTitle(x.target.value)}
+                   onBlur={saveSettings}/>
+            <br/>
+            <label>Description for project (%name%, %id% get replaced)</label>
+            <br/>
+            <input type={"text"} value={projectMetaDescription}
+                   onChange={x => setProjectMetaDescription(x.target.value)} onBlur={saveSettings}/>
+            <br/>
+            <label>Author for project (%name%, %id% get replaced)</label>
+            <br/>
+            <input type={"text"} value={projectMetaAuthor} onChange={x => setProjectMetaAuthor(x.target.value)}
+                   onBlur={saveSettings}/>
+            <br/>
+            <label>Site name for project (%name%, %id% get replaced)</label>
+            <br/>
+            <input type={"text"} value={projectMetaSiteName} onChange={x => setProjectMetaSiteName(x.target.value)}
+                   onBlur={saveSettings}/>
+        </details>
 
         <hr/>
 

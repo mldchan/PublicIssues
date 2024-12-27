@@ -43,6 +43,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     res.status(200).send({
         title: await getValue("instTitle"),
-        description: await getValue("instDescription")
+        description: await getValue("instDescription"),
+        meta: {
+            index: {
+                title: await getValue("indexMetaTitle"),
+                description: await getValue("indexMetaDescription"),
+                author: await getValue("indexMetaAuthor"),
+                siteName: await getValue("indexMetaSiteName"),
+            },
+            project: {
+                title: await getValue("projectMetaTitle"),
+                description: await getValue("projectMetaDescription"),
+                author: await getValue("projectMetaAuthor"),
+                siteName: await getValue("projectMetaSiteName")
+            },
+            domain: await getValue("domain")
+        }
     });
 }
