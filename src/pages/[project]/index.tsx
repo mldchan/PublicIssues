@@ -1,3 +1,20 @@
+/*
+ * Public Issues allows creating issues on most repo software. Great for self hosts.
+ * Copyright (C) 2024  エムエルディーちゃん mldchan
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 import {GetServerSidePropsContext, InferGetServerSidePropsType} from "next";
 import {getProject, getProjectIssues} from "@/backend/issues/issues";
 import ReactMarkdown from "react-markdown";
@@ -42,7 +59,7 @@ export default function Project(props: InferGetServerSidePropsType<typeof getSer
         {props.issues.map((x, i) => {
             return <div key={i} className={'p-2 border-2 border-white m-2 rounded-lg'}>
                 <h3 className={'text-xl font-bold'}>{x.title}</h3>
-                <ReactMarkdown remarkPlugins={[remarkGfm]} children={x.description} />
+                <ReactMarkdown remarkPlugins={[remarkGfm]} children={x.description}/>
             </div>
         })}
     </main>

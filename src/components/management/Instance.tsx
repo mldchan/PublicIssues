@@ -1,7 +1,23 @@
+/*
+ * Public Issues allows creating issues on most repo software. Great for self hosts.
+ * Copyright (C) 2024  エムエルディーちゃん mldchan
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 import {useEffect, useRef, useState} from "react";
 import {getSettings, setSettings} from "@/frontend/admin/instance";
-import {createUser, deleteUser} from "@/frontend/admin/users";
-import {getUsers} from "@/frontend/admin/users";
+import {createUser, deleteUser, getUsers} from "@/frontend/admin/users";
 
 
 export default function InstanceSettings() {
@@ -90,16 +106,16 @@ export default function InstanceSettings() {
         <br/>
         <input type={"text"} value={description} onChange={x => setDescription(x.target.value)} onBlur={saveSettings}/>
 
-        <hr />
+        <hr/>
 
         <h2>Users</h2>
         <p>Here you can create additional administrators to manage this instance of Public Issues.</p>
         <table className={'w-full'}>
             <thead>
-                <tr>
-                    <th className={'w-2/3'}>Username</th>
-                    <th className={'w-1/3'}>Actions</th>
-                </tr>
+            <tr>
+                <th className={'w-2/3'}>Username</th>
+                <th className={'w-1/3'}>Actions</th>
+            </tr>
             </thead>
             <tbody>
             {users.map(x => {
@@ -136,13 +152,15 @@ export default function InstanceSettings() {
         <p>Create a new user.</p>
         <label htmlFor={'username'}>Username: </label>
         <br/>
-        <input type={"text"} value={username} onChange={x => setUsername(x.target.value)} disabled={userLoading} />
+        <input type={"text"} value={username} onChange={x => setUsername(x.target.value)} disabled={userLoading}/>
         <br/>
         <label htmlFor={'password'}>Password: </label>
         <br/>
-        <input type={"password"} value={password} onChange={x => setPassword(x.target.value)} disabled={userLoading} />
+        <input type={"password"} value={password} onChange={x => setPassword(x.target.value)} disabled={userLoading}/>
         <br/>
-        <button onClick={submitUserCreateForm} disabled={userLoading} className={'bg-blue-600 rounded-lg p-1 px-2'}>Create user</button>
+        <button onClick={submitUserCreateForm} disabled={userLoading}
+                className={'bg-blue-600 rounded-lg p-1 px-2'}>Create user
+        </button>
         {createUserSuccess && <p className={'text-green-600'}>User was created!</p>}
         {createUserError && <p className={'text-red-600'}>Failed to create user!</p>}
     </>

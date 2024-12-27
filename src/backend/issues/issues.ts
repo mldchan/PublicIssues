@@ -1,3 +1,20 @@
+/*
+ * Public Issues allows creating issues on most repo software. Great for self hosts.
+ * Copyright (C) 2024  エムエルディーちゃん mldchan
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 import {
     createGitlabIssue,
     getAllGitLabProjects,
@@ -7,8 +24,7 @@ import {
 import {createGitHubIssue, getAllGitHubProjects, getGitHubProject} from "@/backend/issues/github/projects";
 import {createForgejoIssue, getAllForgejoProjects, getForgejoProject} from "@/backend/issues/forgejo/projects";
 import {Project, ProjectBase, ProjectPrivacy} from "@/types/project";
-import {Issue} from "@/types/issue";
-import {IssueType} from "@/types/general";
+import {Issue, IssueType} from "@/types/issue";
 import sql from "@/backend/db/postgres";
 
 export function getIssueManager(): IssueType {
@@ -43,8 +59,8 @@ export async function getAllProjects(): Promise<Project[]> {
 
     for (const project of projects) {
         const rows = await sql`select visibility_type, allow_issues
-                                   from projects
-                                   where id = ${project.id}`;
+                               from projects
+                               where id = ${project.id}`;
 
         if (rows.length > 0) {
             let privacy: ProjectPrivacy = 'Private';
@@ -82,8 +98,8 @@ export async function getProject(id: number): Promise<Project | null> {
     }
 
     const rows = await sql`select visibility_type, allow_issues
-                                   from projects
-                                   where id = ${projectBase.id}`;
+                           from projects
+                           where id = ${projectBase.id}`;
 
     if (rows.length > 0) {
         let privacy: ProjectPrivacy = 'Private';
