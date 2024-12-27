@@ -22,6 +22,8 @@ import scopedStyles from '@/styles/scoped.module.css';
 import remarkGfm from "remark-gfm";
 import {getValue} from "@/backend/db/keyValueStore";
 import {ensureDatabase} from "@/backend/users/admin";
+import Head from "next/head";
+import Metadata from "@/components/Metadata";
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     await ensureDatabase();
@@ -32,7 +34,14 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         props: {
             projects: projects.filter(x => x.privacy === "Public"),
             title: await getValue("instTitle"),
-            description: await getValue("instDescription")
+            description: await getValue("instDescription"),
+            meta: {
+                name: await getValue("indexMetaTitle"),
+                description: await getValue("indexMetaDescription"),
+                author: await getValue("indexMetaAuthor"),
+                siteName: await getValue("indexMetaSiteName"),
+                domain: await getValue("domain")
+            }
         }
     }
 }
@@ -40,6 +49,13 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 export default function Home(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
     return (
         <main>
+            <Head>
+                <Metadata name={props.meta.name}
+                          description={props.meta.description}
+                          domain={props.meta.domain}
+                          author={props.meta.author}
+                          siteName={props.meta.siteName}/>
+            </Head>
 
             <h1>{props.title}</h1>
             <p>{props.description}</p>

@@ -21,10 +21,25 @@ import {setValue} from "@/backend/db/keyValueStore";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
-    const {token, newTitle, newDescription} = req.body as {
+    const {token, newTitle, newDescription, meta} = req.body as {
         token: string;
         newTitle?: string;
         newDescription?: string;
+        meta: {
+            index: {
+                title: string;
+                description: string;
+                author: string;
+                siteName: string;
+            },
+            project: {
+                title: string;
+                description: string;
+                author: string;
+                siteName: string;
+            },
+            domain: string;
+        }
     };
 
     if (token === undefined) {
@@ -47,6 +62,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (newDescription !== undefined) {
         await setValue("instDescription", newDescription);
+    }
+
+    if (meta) {
+        await setValue('indexMetaTitle', meta.index.title);
+        await setValue('indexMetaDescription', meta.index.description);
+        await setValue('indexMetaAuthor', meta.index.author);
+        await setValue('indexMetaSiteName', meta.index.siteName);
+
+        await setValue('projectMetaTitle', meta.project.title);
+        await setValue('projectMetaDescription', meta.project.description);
+        await setValue('projectMetaAuthor', meta.project.author);
+        await setValue('projectMetaSiteName', meta.project.siteName);
+
+        await setValue('domain', meta.domain);
     }
 
     res.status(204).end();

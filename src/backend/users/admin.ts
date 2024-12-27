@@ -52,6 +52,18 @@ export async function ensureDatabase(): Promise<void> {
     await ensureDefaultAdminUser();
     await defaultValue("instTitle", "Welcome to Public Issues!");
     await defaultValue("instDescription", `Here you can file issues on ${getIssueManager()} without an account.`);
+
+    await defaultValue("indexMetaTitle", "Welcome to Public Issues!");
+    await defaultValue("indexMetaDescription", "A system to be able to create issues without an account for self-hosted instance of GitLab/Forgejo or GitHub private repositories.");
+    await defaultValue("indexMetaAuthor", "mldchan");
+    await defaultValue("indexMetaSiteName", "Public Issues Issue Tracker");
+
+    await defaultValue("projectMetaTitle", "Project: %name%");
+    await defaultValue("projectMetaDescription", "Public issues for %name%: Create issues without an account");
+    await defaultValue("projectMetaAuthor", "mldchan");
+    await defaultValue("projectMetaSiteName", "Public Issues Issue Tracker");
+
+    await defaultValue("domain", "localhost");
 }
 
 async function ensureDefaultAdminUser(): Promise<void> {

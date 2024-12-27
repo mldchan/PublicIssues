@@ -1,9 +1,16 @@
 stages:
   - build
 
-build-job:       # This job runs in the build stage, which runs first.
+build-job: # This job runs in the build stage, which runs first.
   stage: build
   script:
     - docker build -t publicissues:latest .
   only:
+    - "main"
+
+build-dev-job:
+  stage: build
+  script:
+    - docker build -t publicissues:dev .
+  except:
     - "main"

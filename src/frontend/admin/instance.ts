@@ -16,9 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export async function setSettings({newTitle, newDescription}: {
+export async function setSettings({newTitle, newDescription, meta}: {
     newTitle?: string;
     newDescription?: string;
+    meta: {
+        index: {
+            title: string;
+            description: string;
+            author: string;
+            siteName: string;
+        },
+        project: {
+            title: string;
+            description: string;
+            author: string;
+            siteName: string;
+        },
+        domain: string;
+    }
 }): Promise<boolean> {
     return new Promise((resolve) => {
         fetch('/api/admin/instance/set', {
@@ -29,7 +44,8 @@ export async function setSettings({newTitle, newDescription}: {
             body: JSON.stringify({
                 token: localStorage.getItem('token'),
                 newTitle,
-                newDescription
+                newDescription,
+                meta
             })
         }).then(x => {
             if (x.ok) {
@@ -46,7 +62,22 @@ export async function setSettings({newTitle, newDescription}: {
 export async function getSettings(): Promise<{
     success: boolean,
     title?: string,
-    description?: string
+    description?: string,
+    meta?: {
+        index: {
+            title: string;
+            description: string;
+            author: string;
+            siteName: string;
+        },
+        project: {
+            title: string;
+            description: string;
+            author: string;
+            siteName: string;
+        },
+        domain: string;
+    }
 }> {
     return new Promise((resolve) => {
         fetch('/api/admin/instance/get', {
@@ -63,7 +94,22 @@ export async function getSettings(): Promise<{
                     resolve({
                         success: true,
                         title: x.title,
-                        description: x.description
+                        description: x.description,
+                        meta: {
+                            index: {
+                                title: x.meta.index.title,
+                                description: x.meta.index.description,
+                                author: x.meta.index.author,
+                                siteName: x.meta.index.siteName,
+                            },
+                            project: {
+                                title: x.meta.project.title,
+                                description: x.meta.project.description,
+                                author: x.meta.project.author,
+                                siteName: x.meta.project.siteName,
+                            },
+                            domain: x.meta.domain
+                        }
                     });
                 }).catch(x => {
                     resolve({success: false});
