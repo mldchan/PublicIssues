@@ -17,9 +17,18 @@
  */
 import {useEffect, useRef, useState} from "react";
 import LogInForm from "@/components/management/LogIn";
+import {GetServerSidePropsContext, InferGetServerSidePropsType} from "next";
 
 
-export default function Manage() {
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+    return {
+        props: {
+            cfKey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!
+        }
+    }
+}
+
+export default function Manage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
     const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
     const hasRan = useRef(false);
@@ -46,7 +55,7 @@ export default function Manage() {
 
     if (!loggedIn) {
         return <main>
-            <LogInForm/>
+            <LogInForm cfKey={props.cfKey}/>
         </main>
     }
 

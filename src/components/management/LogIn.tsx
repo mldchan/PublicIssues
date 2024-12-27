@@ -17,19 +17,9 @@
  */
 import React, {FormEvent, useRef, useState} from "react";
 import Turnstile, {useTurnstile} from "react-turnstile";
-import {GetServerSidePropsContext, InferGetServerSidePropsType} from "next";
 
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    return {
-        props: {
-            cfKey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!
-        }
-    }
-}
-
-
-export default function LogInForm(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function LogInForm(props: { cfKey: string }) {
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [turnstileToken, setTurnstileToken] = useState<string>('');
