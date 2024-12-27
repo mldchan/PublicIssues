@@ -36,7 +36,8 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     return {
         props: {
-            project: fetchedProject
+            project: fetchedProject,
+            cfKey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!
         }
     }
 }
@@ -89,7 +90,7 @@ export default function CreateIssue(props: InferGetServerSidePropsType<typeof ge
                 <br/>
 
                 {error && <p className='text-red-600'>{error}</p>}
-                <Turnstile sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!} retry={"auto"}
+                <Turnstile sitekey={props.cfKey} retry={"auto"}
                            appearance={"always"} onVerify={x => setTurnstileToken(x)}
                 />
 

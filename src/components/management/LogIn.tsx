@@ -17,9 +17,19 @@
  */
 import React, {FormEvent, useRef, useState} from "react";
 import Turnstile, {useTurnstile} from "react-turnstile";
+import {GetServerSidePropsContext, InferGetServerSidePropsType} from "next";
 
 
-export default function LogInForm() {
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+    return {
+        props: {
+            cfKey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!
+        }
+    }
+}
+
+
+export default function LogInForm(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [turnstileToken, setTurnstileToken] = useState<string>('');
@@ -87,7 +97,7 @@ export default function LogInForm() {
             <br/>
             <label>Let us know you're a not a robot:</label>
             <br/>
-            <Turnstile sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!} retry={"auto"} fixedSize={true}
+            <Turnstile sitekey={props.cfKey} retry={"auto"} fixedSize={true}
                        appearance={"always"} execution={"render"} onVerify={(token) => setTurnstileToken(token)}
             />
             <button type='submit' disabled={loading || turnstileToken === null}
