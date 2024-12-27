@@ -29,6 +29,7 @@ COPY next.config.ts .
 COPY tsconfig.json .
 COPY postcss.config.mjs .
 COPY tailwind.config.ts .
+COPY LICENSE .
 
 RUN yarn build
 
