@@ -18,7 +18,7 @@
 import {GetServerSidePropsContext, InferGetServerSidePropsType} from "next";
 import {getProject} from "@/backend/issues/issues";
 import {FormEvent, useRef, useState} from "react";
-import {Turnstile} from "next-turnstile";
+import Turnstile, {useTurnstile} from "react-turnstile";
 import {submitIssue} from "@/frontend/issues";
 import {ensureDatabase} from "@/backend/users/admin";
 
@@ -44,11 +44,14 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 export default function CreateIssue(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
     const [issueTitle, setIssueTitle] = useState("");
     const [issueBody, setIssueBody] = useState("");
+    const [turnstileToken, setTurnstileToken] = useState("");
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
     const formRef = useRef<HTMLFormElement>(null);
+
+    const turnstile = useTurnstile();
 
     const handleForm = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -57,13 +60,13 @@ export default function CreateIssue(props: InferGetServerSidePropsType<typeof ge
 
         const formData = new FormData(formRef.current);
 
-        const token = formData.get("cf-turnstile-response");
+        const token = turnstileToken;
         const issueTitle = formData.get("title");
         const issueBody = formData.get("body");
 
         setLoading(true);
 
-        submitIssue(props.project.id, issueTitle?.toString() ?? '', issueBody?.toString() ?? '', token?.toString() ?? '').then(x => {
+        submitIssue(props.project.id, issueTitle?.toString() ?? '', issueBody?.toString() ?? '', token).then(x => {
             if (!x.status)
                 setError(x.error!);
             setLoading(false);
@@ -86,10 +89,12 @@ export default function CreateIssue(props: InferGetServerSidePropsType<typeof ge
                 <br/>
 
                 {error && <p className='text-red-600'>{error}</p>}
-                <Turnstile siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!} retry={"auto"} refreshExpired={"auto"}
-                           sandbox={process.env.NODE_ENV === "development"}/>
+                <Turnstile sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!} retry={"auto"}
+                           appearance={"always"} onVerify={x => setTurnstileToken(x)}
+                />
 
-                <button type="submit" disabled={loading} className='bg-blue-600 p-2 rounded-lg'>Create the issue
+                <button type="submit" disabled={loading || !turnstileToken}
+                        className='bg-blue-600 p-2 rounded-lg'>Create the issue
                 </button>
             </form>
         </main>

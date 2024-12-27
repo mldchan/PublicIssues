@@ -15,20 +15,25 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import {validateTurnstileToken} from "next-turnstile";
-import {v4} from "uuid";
+import {NextApiRequest} from "next";
 
-export async function validateTurnstileResponse(captcha: string): Promise<boolean> {
+export async function validateTurnstileResponse(req: NextApiRequest, captchaToken: string): Promise<boolean> {
     if (!process.env.TURNSTILE_SECRET_KEY || !process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
         return false;
     }
 
-    const resp = await validateTurnstileToken({
-        token: captcha,
-        secretKey: process.env.TURNSTILE_SECRET_KEY!,
-        idempotencyKey: v4(),
-        sandbox: process.env.NODE_ENV === "development"
-    });
+    const form = new URLSearchParams();
+    form.append("secret", process.env.TURNSTILE_SECRET_KEY!);
+    form.append("response", captchaToken);
+    form.append("remoteip", req.headers["x-forwarded-for"] as string);
 
-    return resp.success;
+    const result = await fetch(
+        "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+        {method: "POST", body: form},
+    );
+
+    const json = await result.json();
+    console.log(json);
+
+    return json.success;
 }

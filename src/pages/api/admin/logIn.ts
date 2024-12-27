@@ -25,27 +25,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const {username, password, token} = req.body;
 
     if (!username || !password || !token) {
-        res.status(400).send({'error': 'Username or Password is required'});
+        res.status(400).send({error: 'Username or Password is required'});
         return;
     }
 
-    if (!await validateTurnstileResponse(token)) {
-        res.status(400).send({'error': 'Turnstile failed to validate you'});
+    if (!await validateTurnstileResponse(req, token)) {
+        res.status(400).send({error: 'Turnstile failed to validate you'});
         return;
     }
 
     await ensureDatabase();
 
     if (!await checkPassword(username, password)) {
-        res.status(401).send({'error': 'Invalid username or password'});
+        res.status(401).send({error: 'Invalid username or password'});
         return;
     }
 
     const userToken = await generateToken(username);
 
     if (!userToken) {
-        res.status(401).send({'error': 'Invalid username or password'});
+        res.status(401).send({error: 'Invalid username or password'});
     }
 
-    res.status(200).send({'token': userToken});
+    res.status(200).send({token: userToken});
 }

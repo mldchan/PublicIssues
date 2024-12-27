@@ -15,17 +15,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import {FormEvent, useRef, useState} from "react";
-import {Turnstile} from "next-turnstile";
+import React, {FormEvent, useRef, useState} from "react";
+import Turnstile, {useTurnstile} from "react-turnstile";
 
 
 export default function LogInForm() {
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [turnstileToken, setTurnstileToken] = useState<string>('');
 
     const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string>("");
 
     const formRef = useRef<HTMLFormElement>(null);
+
+    const turnstile = useTurnstile();
 
     const action = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -34,7 +38,7 @@ export default function LogInForm() {
 
         const formData = new FormData(formRef.current);
 
-        const token = formData.get('cf-turnstile-response')?.toString() ?? '';
+        const token = turnstileToken;
         const username = formData.get('username')?.toString() ?? '';
         const password = formData.get('password')?.toString() ?? '';
 
@@ -51,20 +55,18 @@ export default function LogInForm() {
                 token
             })
         }).then(x => {
-            if (!x.ok) {
-                setLoading(false);
-            }
-
             x.json().then(x => {
                 setLoading(false);
-
-                if (x.token && x.token !== '') {
+                if (x.error) {
+                    setError(`Error: ${x.error}`);
+                } else if (x.token) {
                     localStorage.setItem('token', x.token);
                     location.reload();
                 }
             })
         }).catch(x => {
             setLoading(false);
+            setError(`Error: ${x}`)
         })
 
     }
@@ -85,9 +87,13 @@ export default function LogInForm() {
             <br/>
             <label>Let us know you're a not a robot:</label>
             <br/>
-            <Turnstile siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!} retry={"auto"} refreshExpired={"auto"}
-                       sandbox={process.env.NODE_ENV === "development"}/>
-            <button type='submit' disabled={loading} className='bg-blue-600 rounded-lg p-2 px-4'>Log In</button>
+            <Turnstile sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!} retry={"auto"} fixedSize={true}
+                       appearance={"always"} execution={"render"} onVerify={(token) => setTurnstileToken(token)}
+            />
+            <button type='submit' disabled={loading || turnstileToken === null}
+                    className='bg-blue-600 rounded-lg p-2 px-4'>Log In
+            </button>
+            {error && <p className={'text-red-600'}>{error}</p>}
         </form>
     </>)
 
