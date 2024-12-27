@@ -25,3 +25,4 @@ export async function deleteValue(key: string) {
 export async function defaultValue(key: string, value: string) {
     await sql`insert into kv_store(key, value) values (${key}, ${value}) on conflict do nothing`;
 }
+
