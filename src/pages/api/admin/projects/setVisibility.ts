@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import {NextApiRequest, NextApiResponse} from "next";
-import {checkToken} from "@/backend/users/admin";
+import {checkToken, ensureDatabase} from "@/backend/users/admin";
 import {getProject} from "@/backend/issues/issues";
 import sql from "@/backend/db/postgres";
 
@@ -29,6 +29,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             error: "Not all fields were provided",
         });
     }
+
+    await ensureDatabase();
 
     if (!await checkToken(token)) {
         return res.status(401).send({

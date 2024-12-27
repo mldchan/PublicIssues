@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import {NextApiRequest, NextApiResponse} from "next";
-import {checkToken, getUsers, newUser} from "@/backend/users/admin";
+import {checkToken, ensureDatabase, getUsers, newUser} from "@/backend/users/admin";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
@@ -31,6 +31,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             error: "Token not provided",
         });
     }
+
+    await ensureDatabase();
 
     if (!await checkToken(token)) {
         return res.status(401).send({

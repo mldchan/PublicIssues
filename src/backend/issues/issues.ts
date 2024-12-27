@@ -26,6 +26,7 @@ import {createForgejoIssue, getAllForgejoProjects, getForgejoProject} from "@/ba
 import {Project, ProjectBase, ProjectPrivacy} from "@/types/project";
 import {Issue, IssueType} from "@/types/issue";
 import sql from "@/backend/db/postgres";
+import {ensureDatabase} from "@/backend/users/admin";
 
 export function getIssueManager(): IssueType {
     switch (process.env.ISSUE_TYPE) {
@@ -56,6 +57,8 @@ export async function getAllProjects(): Promise<Project[]> {
         default:
             throw new Error(`Invalid ISSUE_TYPE: ${process.env.ISSUE_TYPE}`);
     }
+
+    await ensureDatabase();
 
     for (const project of projects) {
         const rows = await sql`select visibility_type, allow_issues
@@ -96,6 +99,8 @@ export async function getProject(id: number): Promise<Project | null> {
     if (!projectBase) {
         return null;
     }
+
+    await ensureDatabase();
 
     const rows = await sql`select visibility_type, allow_issues
                            from projects

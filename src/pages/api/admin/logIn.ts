@@ -34,6 +34,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return;
     }
 
+    await ensureDatabase();
+
     if (!await checkPassword(username, password)) {
         res.status(401).send({'error': 'Invalid username or password'});
         return;

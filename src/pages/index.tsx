@@ -21,8 +21,11 @@ import ReactMarkdown from "react-markdown";
 import scopedStyles from '@/styles/scoped.module.css';
 import remarkGfm from "remark-gfm";
 import {getValue} from "@/backend/db/keyValueStore";
+import {ensureDatabase} from "@/backend/users/admin";
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+    await ensureDatabase();
+
     const projects = await getAllProjects();
 
     return {

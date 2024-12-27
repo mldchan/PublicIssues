@@ -17,6 +17,7 @@
  */
 import {NextApiRequest, NextApiResponse} from "next";
 import {getAllProjects} from "@/backend/issues/issues";
+import {ensureDatabase} from "@/backend/users/admin";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
@@ -24,6 +25,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!token) {
         return res.status(401).json({'error': 'Token is missing'});
     }
+
+    await ensureDatabase();
 
     const projects = await getAllProjects();
 

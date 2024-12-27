@@ -19,11 +19,14 @@ import {GetServerSidePropsContext, InferGetServerSidePropsType} from "next";
 import {getProject, getProjectIssues} from "@/backend/issues/issues";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import {ensureDatabase} from "@/backend/users/admin";
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const {project} = ctx.params as { project: string };
     if (!project) return {notFound: true};
     if (isNaN(Number(project))) return {notFound: true};
+
+    await ensureDatabase();
 
     const fetchedProject = await getProject(Number(project));
     if (!fetchedProject) return {notFound: true};

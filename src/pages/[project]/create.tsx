@@ -20,11 +20,14 @@ import {getProject} from "@/backend/issues/issues";
 import {FormEvent, useRef, useState} from "react";
 import {Turnstile} from "next-turnstile";
 import {submitIssue} from "@/frontend/issues";
+import {ensureDatabase} from "@/backend/users/admin";
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const {project} = ctx.params as { project: string };
     if (!project) return {notFound: true};
     if (isNaN(Number(project))) return {notFound: true};
+
+    await ensureDatabase();
 
     const fetchedProject = await getProject(Number(project));
     if (!fetchedProject) return {notFound: true};

@@ -1,0 +1,16 @@
+services:
+  publicissues:
+    image: publicissues:latest
+    env_file: .env
+    ports:
+      - "3000:3000"
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/pg:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=mldchan
+      - POSTGRES_PASSWORD=changeme
+      - POSTGRES_DB=publicissues

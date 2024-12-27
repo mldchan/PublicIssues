@@ -21,7 +21,6 @@ import ProjectList from "@/components/management/ProjectList";
 
 
 export default function ManageProjects() {
-
     const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
     const hasRan = useRef(false);
