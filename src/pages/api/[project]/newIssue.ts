@@ -64,7 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return;
     }
 
-    const projectURL = await createProjectIssue(Number(project), title, body);
+    const projectURL = await createProjectIssue(Number(projectId), title, body);
 
     if (!projectURL) {
         res.status(400).json({'error': `Internal error while creating issue on project.`});
