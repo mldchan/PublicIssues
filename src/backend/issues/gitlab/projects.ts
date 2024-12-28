@@ -75,6 +75,8 @@ export async function createGitlabIssue(id: number, title: string, body: string)
         token: process.env.GITLAB_TOKEN!
     });
 
+    console.log(id, title, body);
+
     const issue = await gitlab.Issues.create(id, title, {
         description: body
     });

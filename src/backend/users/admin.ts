@@ -49,6 +49,15 @@ export async function ensureDatabase(): Promise<void> {
                       constraint kv_store_pk primary key,
                   value text not null
               );`
+
+    await sql`create table if not exists ip_restrict
+              (
+                  ip_addr         text
+                      constraint ip_restrict_pk
+                          primary key,
+                  restrict_expire timestamp not null default now() + interval '1 hour'
+              );`
+
     await ensureDefaultAdminUser();
     await defaultValue("instTitle", "Welcome to Public Issues!");
     await defaultValue("instDescription", `Here you can file issues on ${getIssueManager()} without an account.`);

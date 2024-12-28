@@ -18,6 +18,7 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import {validateTurnstileResponse} from "@/backend/turnstile";
 import {createProjectIssue, getProject} from "@/backend/issues/issues";
+import {isIPRestricted, restrictIP} from "@/backend/ipRestrict";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const {project: projectId} = req.query as { project: string };
@@ -52,6 +53,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         res.status(400).json({'error': "Turnstile error"});
         return;
     }
+
+    const clientIp = ((req.headers['x-forwarded-for'] || '') as string).split(',').pop()?.trim() ||
+        req.socket.remoteAddress;
+    if (!clientIp) {
+        res.status(500).json({'error': 'Internal server error when getting IP address'});
+        return;
+    }
+
+    if (await isIPRestricted(clientIp)) {
+        res.status(403).json({'error': 'Rate limited'});
+        return;
+    }
+
+    await restrictIP(clientIp);
 
     const project = await getProject(Number(projectId));
     if (!project) {
