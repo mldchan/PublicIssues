@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY package.json .
 
-RUN yarn install
+RUN yarn install && yarn cache clean
 
 COPY src/. src/.
 COPY public/. src/.
@@ -21,7 +21,7 @@ WORKDIR /app
 
 COPY package.json .
 
-RUN yarn install
+RUN yarn install && yarn cache clean
 
 COPY src/. src/.
 COPY public/. src/.
