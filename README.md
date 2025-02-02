@@ -1,3 +1,6 @@
+
+> ⚠️ In maintenance mode. The author is focusing on other projects.
+
 # Public Issues
 
 Allow people outside of GitLab, GitHub or Forgejo to create issues in your repositories. Allow people to create issues inside your private repositores.
